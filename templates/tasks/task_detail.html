@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}{{ task.title }}{% endblock %}
+{% block content %}
+<h1>{{ task.title }}</h1>
+<div class="card">
+  <p>{{ task.description|default:"No description provided." }}</p>
+  <p><strong>Category:</strong> {{ task.category|default:"-" }}</p>
+  <p>
+    <strong>Priority:</strong>
+    <span class="badge {{ task.priority|lower }}">{{ task.get_priority_display }}</span>
+  </p>
+  <p>
+    <strong>Status:</strong>
+    {% if task.is_complete %}
+      <span class="badge done">Done</span>
+    {% else %}
+      <span class="badge">Open</span>
+    {% endif %}
+  </p>
+  <p><strong>Due Date:</strong> {{ task.due_date|default:"-" }}</p>
+  <p><strong>Owner:</strong> {{ task.owner.username }}</p>
+</div>
+<div class="action">
+  <a href="{% url 'task_update' task.pk %}" class="btn secondary">Edit</a>
+  <a href="{% url 'task_delete' task.pk %}" class="btn danger">Delete</a>
+  <a href="{% url 'task_list' %}" class="btn">Back to list</a>
+</div>
+{% endblock %}

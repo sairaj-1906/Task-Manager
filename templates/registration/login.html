@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="auth-box card">
+  <h1>Login</h1>
+  <form method="post">
+    {% csrf_token %} {{ form.non_field_errors }}
+    <p>
+      <label for="{{ form.username.id_for_label }}">Username</label>
+      {{ form.username }}
+    </p>
+    <p>
+      <label for="{{ form.password.id_for_label }}">Password</label>
+      {{ form.password }}
+    </p>
+    <button type="submit" class="btn">Login</button>
+  </form>
+  <p class="auth-note">
+    Don't have an account? <a href="{% url 'signup' %}">Sign Up</a>
+  </p>
+</div>
+{% endblock %}

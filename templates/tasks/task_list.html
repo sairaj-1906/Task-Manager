@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}{% if user.is_staff %}All tasks{% else %}My tasks{% endif %}{% endblock %}
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">{% if user.is_staff %}WORKSPACE{% else %}YOUR WORKSPACE{% endif %}</p>
+    <h1>{% if user.is_staff %}All tasks{% else %}My tasks{% endif %}</h1>
+    <p class="page-subtitle">Stay on top of your priorities and make progress every day.</p>
+  </div>
+  <a href="{% url 'task_create' %}" class="btn"><span aria-hidden="true">＋</span> Create task</a>
+</section>
+
+<form method="get" class="filter-panel" role="search">
+  <div class="search-field">
+    <label class="sr-only" for="task-search">Search tasks</label>
+    <span aria-hidden="true">⌕</span>
+    <input id="task-search" type="search" name="q" value="{{ search_query }}" placeholder="Search title or description">
+  </div>
+  <div class="filter-field">
+    <label class="sr-only" for="task-status">Status</label>
+    <select id="task-status" name="status">
+      <option value="all" {% if status_filter == "all" %}selected{% endif %}>Every status</option>
+      <option value="open" {% if status_filter == "open" %}selected{% endif %}>In progress</option>
+      <option value="completed" {% if status_filter == "completed" %}selected{% endif %}>Completed</option>
+    </select>
+  </div>
+  <div class="filter-field">
+    <label class="sr-only" for="task-priority">Priority</label>
+    <select id="task-priority" name="priority">
+      <option value="">All priorities</option>
+      {% for value, label in priority_choices %}
+      <option value="{{ value }}" {% if priority_filter == value %}selected{% endif %}>{{ label }} priority</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="filter-field">
+    <label class="sr-only" for="task-category">Category</label>
+    <select id="task-category" name="category">
+      <option value="">All categories</option>
+      {% for category in categories %}
+      <option value="{{ category.pk }}" {% if category_filter == category.pk|stringformat:"s" %}selected{% endif %}>{{ category.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <button type="submit" class="btn btn-small">Apply filters</button>
+  {% if search_query or priority_filter or category_filter or status_filter != "all" %}
+  <a href="{% url 'task_list' %}" class="clear-filters">Clear</a>
+  {% endif %}
+</form>
+
+<div class="list-summary">
+  <span><strong>{{ page_obj.paginator.count }}</strong> task{{ page_obj.paginator.count|pluralize }}</span>
+  {% if user.is_staff %}<span class="summary-note">Across all members</span>{% endif %}
+</div>
+
+{% if tasks %}
+<div class="task-list">
+  {% for task in tasks %}
+  <article class="task-card {% if task.is_complete %}is-complete{% endif %}">
+    <div class="task-check" aria-hidden="true">{% if task.is_complete %}✓{% endif %}</div>
+    <div class="task-main">
+      <div class="task-title-row">
+        <h2><a href="{% url 'task_detail' task.pk %}">{{ task.title }}</a></h2>
+        <span class="badge {{ task.priority|lower }}">{{ task.get_priority_display }}</span>
+      </div>
+      <p class="task-description">{{ task.description|default:"No description added."|truncatewords:22 }}</p>
+      <div class="task-meta">
+        {% if task.category %}<span class="meta-chip"><span aria-hidden="true">◈</span> {{ task.category.name }}</span>{% endif %}
+        {% if task.due_date %}
+        <span class="meta-chip {% if not task.is_complete and task.due_date < today %}overdue{% endif %}">
+          <span aria-hidden="true">◷</span>
+          {% if not task.is_complete and task.due_date < today %}Overdue · {% endif %}{{ task.due_date|date:"M j, Y" }}
+        </span>
+        {% endif %}
+        {% if user.is_staff %}<span class="meta-chip">By {{ task.owner.username }}</span>{% endif %}
+      </div>
+    </div>
+    <div class="task-side">
+      {% if task.is_complete %}
+      <span class="status-text completed-text">Completed</span>
+      {% else %}
+      <span class="status-text">In progress</span>
+      {% endif %}
+      <div class="task-actions">
+        <a href="{% url 'task_update' task.pk %}" class="icon-link" aria-label="Edit {{ task.title }}">Edit</a>
+        <a href="{% url 'task_delete' task.pk %}" class="icon-link delete-link" aria-label="Delete {{ task.title }}">Delete</a>
+      </div>
+    </div>
+  </article>
+  {% endfor %}
+</div>
+
+{% if is_paginated %}
+<nav class="pagination" aria-label="Task pages">
+  {% if previous_page_url %}<a href="{{ previous_page_url }}" class="pagination-link">← Previous</a>{% else %}<span class="pagination-link disabled">← Previous</span>{% endif %}
+  <span>Page <strong>{{ page_obj.number }}</strong> of {{ page_obj.paginator.num_pages }}</span>
+  {% if next_page_url %}<a href="{{ next_page_url }}" class="pagination-link">Next →</a>{% else %}<span class="pagination-link disabled">Next →</span>{% endif %}
+</nav>
+{% endif %}
+{% else %}
+<div class="empty-state card">
+  <span class="empty-icon" aria-hidden="true">✓</span>
+  {% if search_query or priority_filter or category_filter or status_filter != "all" %}
+  <h2>No tasks match these filters</h2>
+  <p>Try a different search or clear the filters to see all your tasks.</p>
+  <a href="{% url 'task_list' %}" class="btn secondary">Clear filters</a>
+  {% else %}
+  <h2>Your task list is clear</h2>
+  <p>Capture your next idea and turn it into a plan.</p>
+  <a href="{% url 'task_create' %}" class="btn">Create your first task</a>
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}

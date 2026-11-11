@@ -1,0 +1,79 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f5f7fb" />
+    <title>{% block title %}Task Manager{% endblock %}</title>
+    <script>
+      try {
+        const savedTheme = localStorage.getItem("task-manager-theme");
+        const preferredTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light";
+        document.documentElement.dataset.theme =
+          savedTheme === "dark" || savedTheme === "light" ? savedTheme : preferredTheme;
+      } catch {
+        document.documentElement.dataset.theme = "light";
+      }
+    </script>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <script src="{% static 'js/theme.js' %}" defer></script>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="nav-container">
+        <a href="{% url 'dashboard' %}" class="nav-brand">
+          <span class="brand-mark" aria-hidden="true">T</span>
+          <span>Taskflow</span>
+        </a>
+
+        <div class="nav-links">
+          {% if user.is_authenticated %}
+            <a href="{% url 'dashboard' %}" class="nav-link">Overview</a>
+            <a href="{% url 'task_list' %}" class="nav-link">My tasks</a>
+            <a href="{% url 'task_create' %}" class="nav-link">New task</a>
+            {% if user.is_staff %}
+              <a href="{% url 'staff_report' %}" class="nav-link">Staff report</a>
+            {% endif %}
+            <button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch color theme">
+              <span class="theme-icon" aria-hidden="true">◐</span>
+              <span data-theme-label>Dark mode</span>
+            </button>
+            <span class="nav-user">{{ user.username }}</span>
+            <form action="{% url 'logout' %}" method="post" class="inline-form">
+              {% csrf_token %}
+              <button type="submit" class="nav-link link-button">Sign out</button>
+            </form>
+          {% else %}
+            <button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch color theme">
+              <span class="theme-icon" aria-hidden="true">◐</span>
+              <span data-theme-label>Dark mode</span>
+            </button>
+            <a href="{% url 'login' %}" class="nav-link">Sign in</a>
+            <a href="{% url 'signup' %}" class="btn btn-small">Get started</a>
+          {% endif %}
+        </div>
+      </div>
+    </nav>
+
+    <main class="container">
+      {% if messages %}
+        <ul class="messages" role="status">
+          {% for message in messages %}
+            <li class="message {{ message.tags }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      {% block content %}{% endblock %}
+    </main>
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <span>Taskflow</span>
+        <span>Make space for what matters.</span>
+      </div>
+    </footer>
+  </body>
+</html>
