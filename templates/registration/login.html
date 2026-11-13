@@ -2,7 +2,9 @@
 {% block title %}Login{% endblock %}
 {% block content %}
 <div class="auth-box card">
-  <h1>Login</h1>
+  <p class="eyebrow">WELCOME BACK</p>
+  <h1>Sign in to Taskflow</h1>
+  <p class="page-subtitle">Pick up where you left off and keep your momentum going.</p>
   <form method="post">
     {% csrf_token %} {{ form.non_field_errors }}
     <p>
@@ -13,10 +15,10 @@
       <label for="{{ form.password.id_for_label }}">Password</label>
       {{ form.password }}
     </p>
-    <button type="submit" class="btn">Login</button>
+    <button type="submit" class="btn btn-primary">Sign in</button>
   </form>
   <p class="auth-note">
-    Don't have an account? <a href="{% url 'signup' %}">Sign Up</a>
+    New to Taskflow? <a href="{% url 'signup' %}">Create an account</a>
   </p>
 </div>
 {% endblock %}
