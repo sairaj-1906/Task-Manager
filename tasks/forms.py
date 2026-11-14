@@ -30,6 +30,7 @@ class TaskForm(forms.ModelForm):
             "due_date",
             "is_complete",
         ]
+        labels = {"is_complete": "Mark as Completed"}
         widgets = {
             "description": forms.Textarea(attrs={"rows": 4}),
             "due_date": forms.DateInput(attrs={"type": "date"}),

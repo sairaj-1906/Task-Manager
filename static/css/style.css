@@ -28,9 +28,9 @@
   --surface: #181e29;
   --surface-muted: #1d2532;
   --surface-hover: #242d3b;
-  --text: #edf1f7;
-  --text-soft: #c1cad8;
-  --muted: #8995a8;
+  --text: #f5f7fb;
+  --text-soft: #d7deea;
+  --muted: #b0bbcb;
   --border: #2a3443;
   --primary: #9a94ff;
   --primary-strong: #827aff;
@@ -44,6 +44,23 @@
   --shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
   --nav-bg: rgba(20, 26, 37, 0.9);
   --input-bg: #151b26;
+}
+
+:root[data-theme="dark"] .form-field input,
+:root[data-theme="dark"] .form-field select,
+:root[data-theme="dark"] .form-field textarea {
+  color: var(--text);
+  -webkit-text-fill-color: var(--text);
+}
+
+:root[data-theme="dark"] .form-field select option {
+  background: var(--input-bg);
+  color: var(--text);
+}
+
+:root[data-theme="dark"] .form-field textarea::placeholder {
+  color: var(--muted);
+  opacity: 1;
 }
 
 * {
@@ -318,6 +335,7 @@ h2 {
   border: 1px solid var(--border);
   border-radius: 15px;
   background: var(--surface);
+  color: var(--text);
   box-shadow: var(--shadow);
 }
 
@@ -454,6 +472,21 @@ h2 {
 
 .form-card {
   max-width: 720px;
+}
+
+.task-form-page {
+  display: grid;
+  justify-items: center;
+}
+
+.task-form-page > .page-heading,
+.task-form-page > .form-card {
+  width: min(720px, 100%);
+}
+
+.task-form-page > .page-heading {
+  justify-content: center;
+  text-align: center;
 }
 
 .form-card .action {
@@ -854,6 +887,32 @@ h2 {
 
 .form-field {
   margin-bottom: 17px;
+}
+
+.form-field-checkbox {
+  width: fit-content;
+  min-height: 42px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--surface-muted);
+}
+
+.completion-control {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 9px;
+  margin: 0 !important;
+  cursor: pointer;
+}
+
+.completion-control input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--primary);
 }
 
 .form-field label,
