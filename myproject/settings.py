@@ -10,38 +10,30 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
-# import os
+import os
 from pathlib import Path
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# # Pull Secret Key from environment in production
-# SECRET_KEY = os.environ.get("SECRET_KEY", "fallback-secret-key-for-dev")
-
-# # DEBUG should be False in production
-# DEBUG = os.environ.get("DEBUG", "False").lower() in ("true", "1")
-
-# # Allow Render hosts and localhost
-# ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost 127.0.0.1 .onrender.com").split(" ")
-
-# # Static files configuration for WhiteNoise
-# STATIC_URL = "static/"
-# STATICFILES_DIRS = [BASE_DIR / "static"]
-# STATIC_ROOT = BASE_DIR / "staticfiles"
-# STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-dm9+o50@l21im+i^t=4#8l3@wk$k=a_5%3v*bzu5=_g2p2=3eb"
+#! SECRET_KEY = "django-insecure-dm9+o50@l21im+i^t=4#8l3@wk$k=a_5%3v*bzu5=_g2p2=3eb"
+SECRET_KEY = os.environ.get("SECRET_KEY", "dev-only-key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+#! DEBUG = True
+DEBUG = os.environ.get("DEBUG", "FALSE") == "TRUE"
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "testserver"]
+ALLOWED_HOSTS = [
+    "task-manager-seven-snowy-88.vercel.app",
+    "vercel.app",
+    ".onrender.com"
+    "localhost",
+    "127.0.0.1",
+    "testserver"
+]
 
 
 # Application definition
@@ -58,7 +50,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    # "whitenoise.middleware.WhiteNoiseMiddleware"
+    "whitenoise.middleware.WhiteNoiseMiddleware"
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -94,7 +86,11 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
-    }
+    },
+
+    "default": dj_database_url.config(
+        default="sqlite:///db.sqlite", conn_max_age=600
+    )
 }
 
 
@@ -132,10 +128,17 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
 # Authentication settings
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "task_list"
 LOGOUT_REDIRECT_URL = "login"
+
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.vercel.app",
+    "https://*.onrender.com",
+]
