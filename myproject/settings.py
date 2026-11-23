@@ -20,11 +20,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = "django-insecure-dm9+o50@l21im+i^t=4#8l3@wk$k=a_5%3v*bzu5=_g2p2=3eb"
-SECRET_KEY = os.environ.get("SECRET_KEY", "dev-only-insecure-key")
+SECRET_KEY = os.environ.get("SECRET_KEY", "dev-only-key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
-DEBUG = os.environ.get("DEBUG", "True") == "True"
+DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = [
     "task-manager-seven-snowy-88.vercel.app",
@@ -33,6 +33,12 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "testserver"
+]
+
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.onrender.com",
+    "https://*.vercel.app",
 ]
 
 
@@ -94,7 +100,7 @@ DATABASES = {
     # },
 
     "default": dj_database_url.config(
-        default="sqlite:///db.sqlite3", 
+        default=f"sqlite:///{Path(__file__).resolve().parent.parent / 'db.sqlite3'}", 
         conn_max_age=600
     )
 }
@@ -135,8 +141,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [BASE_DIR / "static"]
 
 # Authentication settings
 LOGIN_URL = "login"
@@ -144,7 +150,6 @@ LOGIN_REDIRECT_URL = "task_list"
 LOGOUT_REDIRECT_URL = "login"
 
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://*.vercel.app",
-    "https://*.onrender.com",
-]
+STORAGES = {
+    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"}
+}
