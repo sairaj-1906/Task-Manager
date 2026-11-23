@@ -28,7 +28,7 @@ DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = [
     "task-manager-seven-snowy-88.vercel.app",
-    "vercel.app",
+    ".vercel.app",
     ".onrender.com"
     "localhost",
     "127.0.0.1",
