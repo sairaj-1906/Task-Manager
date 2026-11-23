@@ -16,7 +16,6 @@ db.sqlite3
 *.log
 local_settings.py
 media/
-staticfiles/
 
 # Environment variables and secrets
 .env
