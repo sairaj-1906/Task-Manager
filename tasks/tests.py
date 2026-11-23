@@ -69,6 +69,20 @@ class TaskListViewTests(TestCase):
         self.assertIn("status=open", response.context["next_page_url"])
         self.assertIn("page=2", response.context["next_page_url"])
 
+    def test_task_actions_render_as_buttons(self):
+        task = Task.objects.create(title="Planning task", owner=self.user)
+
+        response = self.client.get(reverse("task_list"))
+
+        self.assertContains(
+            response,
+            f'href="{reverse("task_update", args=[task.pk])}" class="btn btn-small secondary"',
+        )
+        self.assertContains(
+            response,
+            f'href="{reverse("task_delete", args=[task.pk])}" class="btn btn-small danger"',
+        )
+
 
 class DashboardViewTests(TestCase):
     def test_dashboard_summarizes_progress_and_upcoming_tasks(self):

@@ -82,8 +82,8 @@
       <span class="status-text">In progress</span>
       {% endif %}
       <div class="task-actions">
-        <a href="{% url 'task_update' task.pk %}" class="icon-link" aria-label="Edit {{ task.title }}">Edit</a>
-        <a href="{% url 'task_delete' task.pk %}" class="icon-link delete-link" aria-label="Delete {{ task.title }}">Delete</a>
+        <a href="{% url 'task_update' task.pk %}" class="btn btn-small secondary" aria-label="Edit {{ task.title }}">Edit</a>
+        <a href="{% url 'task_delete' task.pk %}" class="btn btn-small danger" aria-label="Delete {{ task.title }}">Delete</a>
       </div>
     </div>
   </article>

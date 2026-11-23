@@ -82,7 +82,7 @@ body {
     var(--page);
   color: var(--text);
   font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.55;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
@@ -132,7 +132,7 @@ textarea:focus-visible {
   gap: 10px;
   color: var(--text);
   font-family: "Segoe UI", sans-serif;
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 800;
   letter-spacing: -0.04em;
   text-decoration: none;
@@ -147,7 +147,7 @@ textarea:focus-visible {
   border-radius: 12px;
   background: linear-gradient(145deg, #7168ff, #5148d9);
   color: #fff;
-  font-size: 16px;
+  font-size: 17px;
   box-shadow: 0 5px 12px rgba(81, 72, 217, 0.25);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -176,7 +176,7 @@ textarea:focus-visible {
   border-radius: 9px;
   background: transparent;
   color: var(--text-soft);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
@@ -197,7 +197,7 @@ textarea:focus-visible {
 }
 
 .theme-icon {
-  font-size: 16px;
+  font-size: 17px;
   line-height: 1;
 }
 
@@ -205,7 +205,7 @@ textarea:focus-visible {
   padding: 7px 10px;
   border-left: 1px solid var(--border);
   color: var(--text);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
 }
 
@@ -227,7 +227,7 @@ textarea:focus-visible {
 .site-footer {
   border-top: 1px solid var(--border);
   color: var(--muted);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .footer-inner {
@@ -256,13 +256,13 @@ h3 {
 
 h1 {
   margin-bottom: 8px;
-  font-size: clamp(26px, 4vw, 36px);
+  font-size: clamp(27px, 4vw, 37px);
   line-height: 1.2;
 }
 
 h2 {
   margin-bottom: 0;
-  font-size: 18px;
+  font-size: 19px;
 }
 
 .page-heading,
@@ -282,7 +282,7 @@ h2 {
 .eyebrow {
   margin: 0 0 8px;
   color: var(--primary);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.15em;
 }
@@ -298,7 +298,7 @@ h2 {
   border-radius: 10px;
   background: var(--primary);
   color: #fff;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   text-decoration: none;
   white-space: nowrap;
@@ -323,10 +323,14 @@ h2 {
   background: var(--red);
 }
 
+.btn.danger:hover {
+  background: var(--red);
+}
+
 .btn-small {
   min-height: 35px;
   padding: 7px 12px;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .card,
@@ -388,7 +392,7 @@ h2 {
 }
 
 .welcome-panel h1 {
-  font-size: clamp(25px, 4vw, 32px);
+  font-size: clamp(26px, 4vw, 33px);
 }
 
 .stats {
@@ -440,7 +444,7 @@ h2 {
 .stat-label {
   align-self: center;
   color: var(--text-soft);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
 }
 
@@ -448,7 +452,7 @@ h2 {
   grid-column: 2;
   margin-top: 9px;
   font-family: "Segoe UI", sans-serif;
-  font-size: 28px;
+  font-size: 29px;
   line-height: 1.1;
   letter-spacing: -0.06em;
 }
@@ -457,7 +461,7 @@ h2 {
   grid-column: 1 / -1;
   margin-top: 11px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .dashboard-grid {
@@ -511,7 +515,7 @@ h2 {
 .progress-value {
   color: var(--primary);
   font-family: "Segoe UI", sans-serif;
-  font-size: 25px;
+  font-size: 26px;
   letter-spacing: -0.05em;
 }
 
@@ -532,7 +536,7 @@ h2 {
 
 .muted-copy {
   color: var(--muted);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .progress-card .muted-copy {
@@ -541,7 +545,7 @@ h2 {
 
 .text-link {
   color: var(--primary);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   text-decoration: none;
 }
@@ -583,7 +587,7 @@ h2 {
 .upcoming-title {
   overflow: hidden;
   flex: 1;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -591,7 +595,7 @@ h2 {
 
 .upcoming-date {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
   white-space: nowrap;
 }
 
@@ -622,7 +626,7 @@ h2 {
 }
 
 .search-field > span {
-  font-size: 22px;
+  font-size: 23px;
 }
 
 .search-field input,
@@ -633,7 +637,7 @@ h2 {
   outline: 0;
   background: transparent;
   color: var(--text);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .filter-field {
@@ -651,7 +655,7 @@ h2 {
   display: flex;
   justify-content: space-between;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .list-summary strong {
@@ -659,7 +663,7 @@ h2 {
 }
 
 .summary-note {
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .task-list {
@@ -692,7 +696,7 @@ h2 {
   border: 1.5px solid var(--border);
   border-radius: 7px;
   color: #fff;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .is-complete .task-check {
@@ -712,7 +716,7 @@ h2 {
 }
 
 .task-title-row h2 {
-  font-size: 15px;
+  font-size: 16px;
 }
 
 .task-title-row h2 a {
@@ -732,7 +736,7 @@ h2 {
 .task-description {
   margin: 5px 0 10px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .task-meta {
@@ -746,7 +750,7 @@ h2 {
   border-radius: 6px;
   background: var(--surface-muted);
   color: var(--text-soft);
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .meta-chip.overdue {
@@ -759,7 +763,7 @@ h2 {
   border-radius: 6px;
   background: var(--surface-hover);
   color: var(--text-soft);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
 }
 
@@ -793,7 +797,7 @@ h2 {
 
 .status-text {
   color: var(--amber);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
 }
 
@@ -808,7 +812,7 @@ h2 {
 
 .icon-link {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   text-decoration: none;
 }
@@ -824,7 +828,7 @@ h2 {
 .clear-filters {
   padding: 7px 4px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 13px;
   text-decoration: none;
 }
 
@@ -839,7 +843,7 @@ h2 {
   justify-content: center;
   gap: 18px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .pagination-link {
@@ -882,7 +886,7 @@ h2 {
   border-radius: 15px;
   background: var(--primary-soft);
   color: var(--primary);
-  font-size: 22px;
+  font-size: 23px;
 }
 
 .form-field {
@@ -920,7 +924,7 @@ form label {
   display: block;
   margin-bottom: 6px;
   color: var(--text-soft);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
 }
 
@@ -937,7 +941,7 @@ select {
   border-radius: 9px;
   background: var(--input-bg);
   color: var(--text);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 textarea {
@@ -960,14 +964,14 @@ select:focus {
 .helptext {
   display: block;
   margin-top: 5px;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .errorlist {
   margin: 5px 0 0;
   padding-left: 18px;
   color: var(--red);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .auth-box {
@@ -979,12 +983,12 @@ select:focus {
 
 .auth-box h1 {
   margin-bottom: 8px;
-  font-size: 27px;
+  font-size: 28px;
 }
 
 .auth-box > .page-subtitle {
   margin-bottom: 25px;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .auth-box form > p {
@@ -999,7 +1003,7 @@ select:focus {
 .auth-note {
   margin: 20px 0 0;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 13px;
   text-align: center;
 }
 
@@ -1020,7 +1024,7 @@ select:focus {
   border-radius: 10px;
   background: var(--surface);
   color: var(--text-soft);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .message.success {
@@ -1079,7 +1083,7 @@ td {
   padding: 12px 14px;
   border-bottom: 1px solid var(--border);
   text-align: left;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 th {
