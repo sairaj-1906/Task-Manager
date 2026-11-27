@@ -151,8 +151,11 @@ LOGOUT_REDIRECT_URL = "login"
 
 
 STORAGES = {
-    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"}
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedStaticFilesStorage"},
 }
+
+WHITENOISE_USE_FINDERS = True
 
 EMAIL_BACKEND = os.environ.get(
     "EMAIL_BACKEND",
