@@ -14,6 +14,16 @@ class Category(models.Model):
         return self.name
 
 
+class Tag(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+
+    class Meta:
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
 class Task(models.Model):
     class Priority(models.TextChoices):
         LOW = "LOW", "Low"
@@ -25,6 +35,7 @@ class Task(models.Model):
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL, null=True, blank=True, related_name="tasks"
     )
+    tags = models.ManyToManyField(Tag, blank=True, related_name="tasks")
     priority = models.CharField(
         max_length=10, choices=Priority.choices, default=Priority.MEDIUM
     )
@@ -50,3 +61,21 @@ class Task(models.Model):
 
     def get_absolute_url(self):
         return reverse("task_detail", kwargs={"pk": self.pk})
+
+
+class TaskAlert(models.Model):
+    class Kind(models.TextChoices):
+        DUE_SOON = "DUE_SOON", "Due soon"
+        OVERDUE = "OVERDUE", "Overdue"
+
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="alerts")
+    kind = models.CharField(max_length=10, choices=Kind.choices)
+    due_date = models.DateField()
+    sent_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["task", "kind", "due_date"], name="unique_task_alert"
+            )
+        ]

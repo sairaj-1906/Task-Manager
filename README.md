@@ -34,6 +34,9 @@ A clean, fast and secure task manager built with **Django**, featuring user acco
 - [Getting Started](#-getting-started)
 - [Environment Variables](#-environment-variables)
 - [Deployment](#-deployment)
+- [Task API](#task-api)
+- [Deadline email alerts](#deadline-email-alerts)
+- [Automated tests and CI](#automated-tests-and-ci)
 - [Roadmap](#-roadmap)
 - [Contributing](#-contributing)
 - [Author](#-author)
@@ -54,6 +57,11 @@ The project is built with Django's batteries-included approach (authentication, 
 
 - **User authentication:** sign up, log in and log out with Django's secure auth system.
 - **Personal dashboard:** a focused view of your tasks, available only after you sign in.
+- **Task planning:** priorities, due dates, categories, and editable tags.
+- **Task discovery:** search, filter by status/priority/category/tag, and sort by title, priority, date, or creation time.
+- **Deadline alerts:** dashboard alerts for due-today, due-tomorrow, and overdue tasks, plus scheduled email reminders.
+- **REST API:** authenticated JSON endpoints for listing, creating, reading, updating, and deleting tasks.
+- **Automated checks:** Django tests and configuration/migration checks run in GitHub Actions on pushes and pull requests.
 - **Light and dark mode:** a theme toggle in the navbar for comfortable use day or night.
 - **Responsive design:** a clean interface that works on desktop, tablet and mobile.
 - **Production-ready:** environment-based configuration, WhiteNoise static files and PostgreSQL support.
@@ -68,7 +76,7 @@ The project is built with Django's batteries-included approach (authentication, 
 | **Language** | Python 3.12 |
 | **Framework** | Django |
 | **Database** | PostgreSQL (production) / SQLite (local development) |
-| **Frontend** | Django Templates, Tailwind CSS (CDN), vanilla JavaScript |
+| **Frontend** | Django Templates, custom CSS, vanilla JavaScript |
 | **Static files** | WhiteNoise |
 | **Server** | Gunicorn / Vercel Python runtime |
 | **Hosting** | Vercel (app) and Render (PostgreSQL) |
@@ -216,17 +224,66 @@ Taskflow is deployed with a modern, free-tier friendly stack:
 
 ---
 
+## Task API
+
+The API uses the signed-in user's Django session. Requests that change data must include a valid CSRF token. Staff users can access all tasks; other users can access only their own.
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/tasks/` | List tasks; supports `q`, `status`, `priority`, `category`, `tag`, `sort`, `limit` (1–100), and `offset` query parameters |
+| `POST` | `/api/tasks/` | Create a task |
+| `GET` | `/api/tasks/<id>/` | Retrieve a task |
+| `PUT`, `PATCH` | `/api/tasks/<id>/` | Update a task |
+| `DELETE` | `/api/tasks/<id>/` | Delete a task |
+
+Example create/update JSON:
+
+```json
+{
+  "title": "Prepare release",
+  "description": "Review the release checklist",
+  "category_id": 1,
+  "tags": ["Release", "Work"],
+  "priority": "HIGH",
+  "due_date": "2026-12-01",
+  "is_complete": false
+}
+```
+
+List responses contain `count`, `next_offset`, and `results`. Invalid JSON or fields return a JSON `400`; unauthenticated requests return `401`.
+
+## Deadline email alerts
+
+The dashboard highlights incomplete tasks due today, tomorrow, or earlier. To send email reminders for due-today, due-tomorrow, and overdue tasks, schedule this command to run daily:
+
+```powershell
+python manage.py send_task_alerts
+```
+
+Configure `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `EMAIL_USE_TLS`, and `DEFAULT_FROM_EMAIL` in the environment. Without `EMAIL_HOST`, Django's console email backend prints the messages locally. A reminder is recorded after successful delivery so rerunning the command does not resend the same task/date alert.
+
+## Automated tests and CI
+
+Run the test suite locally with:
+
+```powershell
+python manage.py test
+```
+
+GitHub Actions runs the Django system check, migration consistency check, and tests for each push and pull request.
+
 ## Roadmap
 
 - [x] User registration and authentication
 - [x] Personal dashboard
 - [x] Light / dark theme
 - [x] Production deployment (Vercel + PostgreSQL)
-- [ ] Task priorities and due dates
-- [ ] Search, filters and sorting
-- [ ] Task categories and tags
-- [ ] REST API
-- [ ] Automated tests and CI pipeline
+- [x] Task priorities and due dates
+- [x] Search, filters, and sorting
+- [x] Task categories and tags
+- [x] REST API
+- [x] Automated tests and CI pipeline
+- [x] In-app and email deadline alerts
 
 Have an idea? [Open an issue](https://github.com/sairaj-1906/Task-Manager/issues) and let's talk.
 

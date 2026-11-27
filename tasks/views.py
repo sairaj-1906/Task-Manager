@@ -15,7 +15,8 @@ from django.views.generic import (
     UpdateView,
 )
 from .forms import SignUpForm, TaskForm
-from .models import Category, Task
+from .models import Category, Tag, Task
+from .querysets import SORT_CHOICES, order_tasks
 
 
 # =============== Authentication views ===============
@@ -57,7 +58,7 @@ class TaskListView(LoginRequiredMixin, ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        qs = Task.objects.select_related("category", "owner")
+        qs = Task.objects.select_related("category", "owner").prefetch_related("tags")
         if not self.request.user.is_staff:
             qs = qs.filter(owner=self.request.user)
 
@@ -65,11 +66,14 @@ class TaskListView(LoginRequiredMixin, ListView):
         self.status_filter = self.request.GET.get("status", "all")
         self.priority_filter = self.request.GET.get("priority", "")
         self.category_filter = self.request.GET.get("category", "")
+        self.tag_filter = self.request.GET.get("tag", "")
+        self.sort_order = self.request.GET.get("sort", "-created_at")
 
         if self.search_query:
             qs = qs.filter(
                 Q(title__icontains=self.search_query)
                 | Q(description__icontains=self.search_query)
+                | Q(tags__name__icontains=self.search_query)
             )
 
         if self.status_filter == "open":
@@ -90,6 +94,12 @@ class TaskListView(LoginRequiredMixin, ListView):
         else:
             self.category_filter = ""
 
+        if self.tag_filter.isdecimal():
+            qs = qs.filter(tags__id=int(self.tag_filter))
+        else:
+            self.tag_filter = ""
+
+        qs, self.sort_order = order_tasks(qs, self.sort_order)
         return qs
 
     def get_context_data(self, **kwargs):
@@ -97,16 +107,25 @@ class TaskListView(LoginRequiredMixin, ListView):
         context.update(
             {
                 "categories": Category.objects.all(),
+                "tags": Tag.objects.all(),
                 "priority_choices": Task.Priority.choices,
                 "search_query": self.search_query,
                 "status_filter": self.status_filter,
                 "priority_filter": self.priority_filter,
                 "category_filter": self.category_filter,
+                "tag_filter": self.tag_filter,
+                "sort_order": self.sort_order,
+                "sort_choices": SORT_CHOICES,
                 "today": timezone.localdate(),
             }
         )
 
         query_params = self.request.GET.copy()
+        if context["page_obj"].paginator.num_pages > 1:
+            query_params["page"] = 1
+            context["first_page_url"] = f"?{query_params.urlencode()}"
+            query_params["page"] = context["page_obj"].paginator.num_pages
+            context["last_page_url"] = f"?{query_params.urlencode()}"
         if context["page_obj"].has_previous():
             query_params["page"] = context["page_obj"].previous_page_number()
             context["previous_page_url"] = f"?{query_params.urlencode()}"
@@ -180,28 +199,39 @@ class TaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
-class DashboardView(LoginRequiredMixin, View):
-    """A simple home/dashboard page after login."""
+class DashboardView(TaskListView):
+    template_name = "tasks/dashboard.html"
 
-    def get(self, request):
-        user_tasks = Task.objects.filter(owner=request.user)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_tasks = Task.objects.filter(owner=self.request.user)
+        if self.request.user.is_staff:
+            user_tasks = Task.objects.all()
         completed = user_tasks.filter(is_complete=True).count()
         total = user_tasks.count()
-        today = timezone.localdate()
-        context = {
-            "total": total,
-            "completed": completed,
-            "pending": user_tasks.filter(is_complete=False).count(),
-            "overdue": user_tasks.filter(
-                is_complete=False, due_date__lt=today
-            ).count(),
-            "completion_percentage": round(completed / total * 100) if total else 0,
-            "today": today,
-            "upcoming_tasks": user_tasks.filter(
-                is_complete=False, due_date__isnull=False
-            ).order_by("due_date")[:5],
-        }
-        return render(request, "tasks/dashboard.html", context)
+        today = context["today"]
+        tomorrow = today + timezone.timedelta(days=1)
+        context.update(
+            {
+                "total": total,
+                "completed": completed,
+                "pending": user_tasks.filter(is_complete=False).count(),
+                "due_soon": user_tasks.filter(
+                    is_complete=False, due_date__gte=today, due_date__lte=tomorrow
+                ).count(),
+                "overdue": user_tasks.filter(
+                    is_complete=False, due_date__lt=today
+                ).count(),
+                "completion_percentage": round(completed / total * 100) if total else 0,
+                "alert_tasks": user_tasks.filter(
+                is_complete=False, due_date__lte=tomorrow
+                ).order_by("due_date")[:5],
+                "upcoming_tasks": user_tasks.filter(
+                    is_complete=False, due_date__isnull=False
+                ).order_by("due_date")[:5],
+            }
+        )
+        return context
 
 
 class StaffOnlyReportView(LoginRequiredMixin, UserPassesTestMixin, View):

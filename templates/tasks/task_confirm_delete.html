@@ -1,15 +1,17 @@
 {% extends "base.html" %} 
-{% block title %}Delete Task{% endblock %}
+{% block title %}Delete task — Taskflow{% endblock %}
 {% block content %}
-<h1>Delete Task</h1>
-<div class="card">
+<section class="page-heading">
+  <div><p class="eyebrow">MISSION CONTROL</p><h1>Delete task</h1></div>
+</section>
+<div class="detail-panel glass-panel">
   <p>
-    Are you sure you want to delete "<strong>{{ task.title }}</strong>"? This cannot be undo.
+    Delete "<strong>{{ task.title }}</strong>"? This action cannot be undone.
   </p>
   <form method="post">
     {% csrf_token %}
-    <button type="submit" class="btn danger">Yes</button>
-    <a href="{% url 'task_detail' task.pk %}" class="btn secondary">Cancel</a>
+    <button type="submit" class="btn btn-danger">Delete task</button>
+    <a href="{% url 'task_detail' task.pk %}" class="btn btn-quiet">Cancel</a>
   </form>
 </div>
 {% endblock %}

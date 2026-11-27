@@ -1,0 +1,192 @@
+<section class="board-panel" id="task-board" aria-label="Task board">
+  <form method="get" class="board-toolbar" role="search">
+    <div class="filter-search">
+      <label class="sr-only" for="task-search">Search tasks</label>
+      <span aria-hidden="true">⌕</span>
+      <input id="task-search" type="search" name="q" value="{{ search_query }}" placeholder="Filter tasks…">
+    </div>
+    <div class="facet-control">
+      <label for="task-status"><span aria-hidden="true">⊕</span> Status</label>
+      <select id="task-status" name="status">
+        <option value="all" {% if status_filter == "all" %}selected{% endif %}>Every status</option>
+        <option value="open" {% if status_filter == "open" %}selected{% endif %}>In progress</option>
+        <option value="completed" {% if status_filter == "completed" %}selected{% endif %}>Completed</option>
+      </select>
+    </div>
+    <div class="facet-control">
+      <label for="task-priority"><span aria-hidden="true">⊕</span> Priority</label>
+      <select id="task-priority" name="priority">
+        <option value="">All priorities</option>
+        {% for value, label in priority_choices %}
+        <option value="{{ value }}" {% if priority_filter == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="facet-control">
+      <label for="task-category">Category</label>
+      <select id="task-category" name="category">
+        <option value="">All categories</option>
+        {% for category in categories %}
+        <option value="{{ category.pk }}" {% if category_filter == category.pk|stringformat:"s" %}selected{% endif %}>{{ category.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="facet-control">
+      <label for="task-tag">Tag</label>
+      <select id="task-tag" name="tag">
+        <option value="">All tags</option>
+        {% for tag in tags %}
+        <option value="{{ tag.pk }}" {% if tag_filter == tag.pk|stringformat:"s" %}selected{% endif %}>{{ tag.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="facet-control sort-control">
+      <label for="task-sort"><span aria-hidden="true">↕</span> Sort</label>
+      <select id="task-sort" name="sort">
+        {% for value, label in sort_choices %}
+        <option value="{{ value }}" {% if sort_order == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="btn btn-filter" aria-label="Apply filters">Apply</button>
+    {% if search_query or priority_filter or category_filter or tag_filter or status_filter != "all" or sort_order != "-created_at" %}
+    {% if request.resolver_match.url_name == "dashboard" %}
+    <a href="{% url 'dashboard' %}" class="clear-filters">Clear</a>
+    {% else %}
+    <a href="{% url 'task_list' %}" class="clear-filters">Clear</a>
+    {% endif %}
+    {% endif %}
+  </form>
+
+  <div class="board-summary">
+    <span><strong>{{ page_obj.paginator.count }}</strong> task{{ page_obj.paginator.count|pluralize }}</span>
+    {% if user.is_staff %}<span>Across all members</span>{% endif %}
+  </div>
+
+  {% if tasks %}
+  <div class="table-scroll">
+    <table class="task-table">
+      <thead>
+        <tr>
+          <th class="select-column"><input type="checkbox" data-select-all aria-label="Select all tasks on this page"></th>
+          <th class="id-column">Task ID</th>
+          <th>Task</th>
+          <th>Status</th>
+          <th>Priority</th>
+          <th>Owner</th>
+          <th class="actions-column">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for task in tasks %}
+        <tr>
+          <td class="select-column"><input type="checkbox" data-task-select data-task-id="{{ task.pk }}" aria-label="Select {{ task.title }}"></td>
+          <td class="task-id">NEB-{{ task.pk|stringformat:"04d" }}</td>
+          <td class="task-title-cell">
+            <a href="{% url 'task_detail' task.pk %}" class="task-name">{{ task.title }}</a>
+            {% if task.description %}<p>{{ task.description|truncatewords:14 }}</p>{% endif %}
+            <div class="task-tags">
+              {% if task.category %}<span class="task-tag tag-feature">{{ task.category.name }}</span>{% endif %}
+              {% for tag in task.tags.all %}<span class="task-tag {% cycle 'tag-feature' 'tag-bug' 'tag-docs' %}">{{ tag.name }}</span>{% endfor %}
+            </div>
+          </td>
+          <td>
+            {% if task.is_complete %}
+            <span class="task-state state-done"><span aria-hidden="true">✓</span> Done</span>
+            {% else %}
+            <span class="task-state state-progress"><span aria-hidden="true">◐</span> In progress</span>
+            {% endif %}
+            {% if task.due_date %}<span class="task-due {% if not task.is_complete and task.due_date < today %}is-overdue{% endif %}">{% if not task.is_complete and task.due_date < today %}Overdue · {% endif %}{{ task.due_date|date:"M j" }}</span>{% endif %}
+          </td>
+          <td>
+            {% if task.priority == "HIGH" %}
+            <span class="task-priority priority-high"><span aria-hidden="true">↑</span> High</span>
+            {% elif task.priority == "LOW" %}
+            <span class="task-priority priority-low"><span aria-hidden="true">↓</span> Low</span>
+            {% else %}
+            <span class="task-priority priority-medium"><span aria-hidden="true">—</span> Medium</span>
+            {% endif %}
+          </td>
+          <td>
+            <span class="owner">
+              <span class="avatar {% if task.owner.pk|divisibleby:2 %}avatar-magenta{% else %}avatar-aqua{% endif %}" aria-hidden="true">{{ task.owner.username|slice:":2"|upper }}</span>
+              <span class="owner-name">{{ task.owner.username }}</span>
+            </span>
+          </td>
+          <td class="actions-column">
+            <div class="row-actions">
+              <a href="{% url 'task_update' task.pk %}" title="Edit {{ task.title }}" aria-label="Edit {{ task.title }}">Edit</a>
+              <a href="{% url 'task_delete' task.pk %}" class="delete-action" title="Delete {{ task.title }}" aria-label="Delete {{ task.title }}">Delete</a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mobile-task-list">
+    {% for task in tasks %}
+    <article class="mobile-task-row">
+      <input type="checkbox" data-task-select data-task-id="{{ task.pk }}" aria-label="Select {{ task.title }}">
+      <div class="mobile-task-content">
+        <div class="mobile-task-heading">
+          <a href="{% url 'task_detail' task.pk %}" class="task-name">{{ task.title }}</a>
+          <span class="avatar {% if task.owner.pk|divisibleby:2 %}avatar-magenta{% else %}avatar-aqua{% endif %}" aria-label="Owner: {{ task.owner.username }}">{{ task.owner.username|slice:":2"|upper }}</span>
+        </div>
+        <div class="mobile-task-ident">
+          <span class="task-id">NEB-{{ task.pk|stringformat:"04d" }}</span>
+          {% if task.category %}<span class="task-tag tag-feature">{{ task.category.name }}</span>{% endif %}
+          {% for tag in task.tags.all %}<span class="task-tag {% cycle 'tag-feature' 'tag-bug' 'tag-docs' %}">{{ tag.name }}</span>{% endfor %}
+        </div>
+        {% if task.description %}<p class="mobile-task-description">{{ task.description|truncatewords:14 }}</p>{% endif %}
+        <div class="mobile-task-meta">
+          {% if task.is_complete %}
+          <span class="task-state state-done"><span aria-hidden="true">✓</span> Done</span>
+          {% else %}
+          <span class="task-state state-progress"><span aria-hidden="true">◐</span> In progress</span>
+          {% endif %}
+          {% if task.priority == "HIGH" %}
+          <span class="task-priority priority-high"><span aria-hidden="true">↑</span> High</span>
+          {% elif task.priority == "LOW" %}
+          <span class="task-priority priority-low"><span aria-hidden="true">↓</span> Low</span>
+          {% else %}
+          <span class="task-priority priority-medium"><span aria-hidden="true">—</span> Medium</span>
+          {% endif %}
+          {% if task.due_date %}<span class="task-due {% if not task.is_complete and task.due_date < today %}is-overdue{% endif %}">{{ task.due_date|date:"M j" }}</span>{% endif %}
+          <div class="row-actions">
+            <a href="{% url 'task_update' task.pk %}" aria-label="Edit {{ task.title }}">Edit</a>
+            <a href="{% url 'task_delete' task.pk %}" class="delete-action" aria-label="Delete {{ task.title }}">Delete</a>
+          </div>
+        </div>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="board-empty">
+    <span class="empty-symbol" aria-hidden="true">◇</span>
+    {% if search_query or priority_filter or category_filter or tag_filter or status_filter != "all" %}
+    <h2>No tasks match these filters</h2>
+    <p>Adjust the filters or clear them to see more tasks.</p>
+    {% else %}
+    <h2>Your board is clear</h2>
+    <p>There are no tasks here yet.</p>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <footer class="board-footer">
+    <span><strong data-selected-count>0</strong> of {{ tasks|length }} row{{ tasks|length|pluralize }} selected</span>
+    <div class="pagination-controls">
+      <span class="rows-per-page">Rows per page <strong>10</strong></span>
+      <span class="page-count">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+      <nav class="pager" aria-label="Task pages">
+        {% if first_page_url %}<a href="{{ first_page_url }}" aria-label="First page" title="First page">«</a>{% else %}<span aria-disabled="true" aria-label="First page">«</span>{% endif %}
+        {% if previous_page_url %}<a href="{{ previous_page_url }}" aria-label="Previous page" title="Previous page">‹</a>{% else %}<span aria-disabled="true" aria-label="Previous page">‹</span>{% endif %}
+        {% if next_page_url %}<a href="{{ next_page_url }}" aria-label="Next page" title="Next page">›</a>{% else %}<span aria-disabled="true" aria-label="Next page">›</span>{% endif %}
+        {% if last_page_url %}<a href="{{ last_page_url }}" aria-label="Last page" title="Last page">»</a>{% else %}<span aria-disabled="true" aria-label="Last page">»</span>{% endif %}
+      </nav>
+    </div>
+  </footer>
+</section>

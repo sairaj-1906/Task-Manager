@@ -1,20 +1,14 @@
 {% extends "base.html" %}
-{% block title %}Staff Report{% endblock %}
+{% block title %}Insights — Taskflow{% endblock %}
 {% block content %}
-<h1>Staff Report - All Tasks</h1>
-<p class="helptext">
-  This page is only visible to staff/admin users (role-based authorization).
-</p>
-<div class="table-responsive">
-<table class="table table-hover align-middle">
+<section class="page-heading">
+  <div><p class="eyebrow">MISSION CONTROL</p><h1>Insights</h1></div>
+</section>
+<section class="board-panel report-panel">
+<div class="table-scroll">
+<table class="task-table staff-table">
   <thead>
-    <tr>
-      <th>Title</th>
-      <th>Owner</th>
-      <th>Category</th>
-      <th>Priority</th>
-      <th>Status</th>
-    </tr>
+    <tr><th>Title</th><th>Owner</th><th>Category</th><th>Priority</th><th>Status</th></tr>
   </thead>
   <tbody>
     {% for task in tasks %}
@@ -25,20 +19,13 @@
       <td>
         <span class="badge {{ task.priority|lower }}">{{ task.get_priority_display }}</span>
       </td>
-      <td>
-        {% if task.is_complete %}
-          <span class="badge done">Done</span>
-        {% else %}
-          <span class="badge">Pending</span>
-        {% endif %}
-      </td>
+      <td>{% if task.is_complete %}<span class="task-state state-done">✓ Done</span>{% else %}<span class="task-state state-progress">◐ In progress</span>{% endif %}</td>
     </tr>
     {% empty %}
-    <tr>
-      <td colspan="5">No tasks available.</td>
-    </tr>
+    <tr><td colspan="5">No tasks available.</td></tr>
     {% endfor %}
   </tbody>
 </table>
 </div>
+</section>
 {% endblock %}

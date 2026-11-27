@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% block title %}Sign Up{% endblock %} 
+{% block title %}Create account — Taskflow{% endblock %}
 {% block content %}
 <div class="auth-box card">
-  <p class="eyebrow">GET STARTED</p>
+  <p class="eyebrow"></p>
   <h1>Create your account</h1>
-  <p class="page-subtitle">A calmer, clearer way to keep your priorities moving.</p>
+  <p class="page-subtitle">Make room for focused work.</p>
   <form method="post">
     {% csrf_token %} {{ form.non_field_errors }} {% for field in form %}
     <div>
